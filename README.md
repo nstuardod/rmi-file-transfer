@@ -1,8 +1,8 @@
-RMI-File-Transfer
+# RMI-File-Transfer
 Servidor de archivos con RMI y sockets
 Fecha original: Semestre 1/2018
 
-# DESCRIPCIÓN GENERAL:
+## DESCRIPCIÓN GENERAL:
 
 El proyecto consiste en un sistema para administrar archivos a nivel básico
 en un servidor de manera remota, al estilo FTP (con limitaciones). La
@@ -16,17 +16,17 @@ Se proveen dos aplicaciones:
 El cliente RMI contiene dos versiones: una versión gráfica en Swing y una de
 modo texto para efectuar pruebas.
 
-# COMPILACIÓN:
-## Requisitos
+## COMPILACIÓN:
+### Requisitos
 1. Java JDK versión 8 (puede funcionar con JDK 7 pero no ha sido probado).
 2. Apache Ant
 
-## Instrucciones
+### Instrucciones
 1. Extraer el paquete en un directorio vacío.
 2. En un intérprete de comandos o terminal, ejecutar `ant dist`
 (para ver una lista de objetivos: `ant -p`)
 
-# EJECUCIÓN
+## EJECUCIÓN
 Una vez compilado y empaquetados las aplicaciones, podrán ejecutarse desde
 el directorio `dist` mediante un intérprete de comandos o de forma gráfica.
 ## Servidor
@@ -49,7 +49,7 @@ se cargará la versión gráfica del cliente. Para cargar la versión de texto:
 java -jar rmi-client-XXXXXXXX.jar -t <IP o nombre servidor>
 ```
 
-# OBSERVACIONES (o, ¿por qué no puedo conectar a un servidor remoto?)
+## OBSERVACIONES (o, ¿por qué no puedo conectar a un servidor remoto?)
 RMI usa la dirección IP del host del servidor como nombre de servidor en
 referencias remotas(*1), si no se tiene configurado bien el nombre de host,
 Java usará y publicará *localhost* y 127.0.0.1 (o 127.0.1.1) como dirección IP.
