@@ -1,0 +1,118 @@
+<project name="Proyecto RMI" default="dist" basedir=".">
+	<description>
+    Proyecto Java RMI para Sistemas Distribuidos 2018
+    </description>
+    <property name="debug" value="true" />
+	<property name="lib" location="lib" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="dist.lib" location="dist/lib" />
+	<path id="classpath.server">
+		<fileset dir="${lib}">
+			<include name="log4j-1.2.17.jar" />
+			<include name="sqlite-jdbc-3.23.1.jar" />
+		</fileset>
+	</path>
+	<path id="classpath.client">
+		<fileset dir="${lib}">
+			<include name="commons-cli-1.4.jar" />
+		</fileset>
+	</path>
+
+	<target name="init">
+		<tstamp />
+		<mkdir dir="${build}" />
+	</target>
+
+	<target name="server" depends="init" description="Compila el servidor RMI">
+		<mkdir dir="${build}/server" />
+		<javac srcdir="FileServer/src" destdir="${build}/server" debug="${debug}">
+			<classpath refid="classpath.server" />
+		</javac>
+		<copy todir="${build}/server/res">
+			<fileset dir="FileServer/src/res" />
+		</copy>
+	</target>
+
+	<target name="client" depends="init" description="Compila el cliente RMI">
+		<mkdir dir="${build}/client" />
+		<javac srcdir="FileClient/src" destdir="${build}/client" debug="${debug}">
+			<classpath refid="classpath.client" />
+		</javac>
+		<copy todir="${build}/client/res">
+			<fileset dir="FileClient/src/res" />
+		</copy>
+	</target>
+
+	<pathconvert property="classpath.server.jar" pathsep=" ">
+		<path refid="classpath.server" />
+		<mapper>
+			<chainedmapper>
+				<flattenmapper />
+				<globmapper from="*.jar" to="lib/*.jar" />
+			</chainedmapper>
+		</mapper>
+	</pathconvert>
+
+	<pathconvert property="classpath.client.jar" pathsep=" ">
+		<path refid="classpath.client" />
+		<mapper>
+			<chainedmapper>
+				<flattenmapper />
+				<globmapper from="*.jar" to="lib/*.jar" />
+			</chainedmapper>
+		</mapper>
+	</pathconvert>
+
+	<target name="build" description="Compila el proyecto sin generar los paquetes" depends="client, server" />
+
+	<target name="dist" depends="build" description="Empaqueta los proyectos para distribución">
+		<mkdir dir="${dist}" />
+		<mkdir dir="${dist.lib}" />
+		<copy todir="${dist.lib}" flatten="true">
+			<path refid="classpath.server" />
+			<path refid="classpath.client" />
+		</copy>
+
+		<jar jarfile="${dist}/rmi-server-${DSTAMP}.jar">
+			<fileset dir="${build}/server" />
+			<manifest>
+				<attribute name="Main-Class" value="cl.ulagos.icinf.rmi.server.FileServerApplication" />
+				<attribute name="Class-Path" value="${classpath.server.jar}" />
+			</manifest>
+		</jar>
+		<jar jarfile="${dist}/rmi-client-${DSTAMP}.jar">
+			<fileset dir="${build}/client"/>
+			<manifest>
+				<attribute name="Main-Class" value="cl.ulagos.icinf.rmi.client.Launcher" />
+				<attribute name="Class-Path" value="${classpath.client.jar}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="clean" description="Limpieza">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+
+	<target name="-clean-normdir">
+		<delete includeEmptyDirs="true">
+			<fileset dir="${build}" includes="**/*" />
+			<fileset dir="${dist}" includes="**/*" />
+		</delete>
+	</target>
+
+	<target name="rebuild" description="Reconstruir el proyecto desde cero" depends="-clean-normdir, build, dist" />
+	
+	<target name="ship" description="Construir paquete para entrega final" depends="clean">
+	<tstamp />
+	    <zip destfile="proyecto-rmi-${DSTAMP}.zip" compress="true">
+	        <zipfileset dir="FileServer" prefix="FileServer" excludes="bin" />
+	        <zipfileset dir="FileClient" prefix="FileClient" excludes="bin" />
+	        <zipfileset dir="lib" prefix="lib" />
+	        <file name="build.xml" />
+	        <file name="README" />
+	    </zip>
+	</target>
+	
+</project>
